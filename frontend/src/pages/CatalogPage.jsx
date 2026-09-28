@@ -1,0 +1,13 @@
+import { useEffect, useState } from 'react';
+import ProductCard from '../components/ProductCard.jsx';
+import Loader from '../components/Loader.jsx';
+import EmptyState from '../components/EmptyState.jsx';
+import { friendlyError, productsApi } from '../services/api.js';
+const PER_PAGE = 12;
+export default function CatalogPage() {
+  const [books, setBooks] = useState([]); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [page, setPage] = useState(1);
+  const loadBooks = async () => { setLoading(true); setError(''); try { setBooks((await productsApi.get('/produtos')).data); } catch (err) { setError(friendlyError(err, 'products')); } finally { setLoading(false); } };
+  useEffect(() => { loadBooks(); }, []);
+  const pages = Math.ceil(books.length / PER_PAGE); const visible = books.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  return <><section className="hero"><div><p className="eyebrow">CURADORIA PARA DIAS CURIOSOS</p><h1>Histórias que ficam<br/><em>com você.</em></h1><p>Uma seleção de boas leituras para descobrir, sentir e guardar por perto.</p><a href="#catalogo" className="button button--light">Explorar livros <span>↓</span></a></div><div className="hero-art"><span className="sun"></span><span className="leaf leaf-a">⌇</span><span className="leaf leaf-b">⌇</span><div className="hero-book"><b>books<br/>for a<br/>new day</b><small>BOOKSTOP</small></div></div></section><main className="page-shell" id="catalogo"><div className="section-heading"><div><p className="eyebrow">CATÁLOGO</p><h2>Encontre sua próxima leitura</h2></div>{!loading && !error && <span className="result-count">{books.length} livros selecionados</span>}</div>{loading ? <Loader label="Carregando livros..." /> : error ? <EmptyState title="Catálogo indisponível" text={error}><button className="button" onClick={loadBooks}>Tentar novamente</button></EmptyState> : books.length === 0 ? <EmptyState title="Nenhum livro encontrado" text="Volte em breve para conhecer novas histórias." /> : <><div className="book-grid">{visible.map((book) => <ProductCard key={book.id} book={book} />)}</div>{pages > 1 && <nav className="pagination" aria-label="Paginação do catálogo"><button disabled={page === 1} onClick={() => setPage((current) => current - 1)}>← <span>Anterior</span></button>{Array.from({ length: pages }, (_, index) => <button className={page === index + 1 ? 'active' : ''} onClick={() => setPage(index + 1)} key={index}>{index + 1}</button>)}<button disabled={page === pages} onClick={() => setPage((current) => current + 1)}><span>Próxima</span> →</button></nav>}</>}</main></>;
+}

@@ -1,0 +1,18 @@
+{
+  "info": { "name": "BooksTop APIs", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "variable": [{ "key": "produtosUrl", "value": "http://localhost:3001" }, { "key": "pedidosUrl", "value": "http://localhost:3002" }],
+  "item": [
+    { "name": "Produtos", "item": [
+      { "name": "Listar produtos", "request": { "method": "GET", "url": "{{produtosUrl}}/produtos" } },
+      { "name": "Buscar produto", "request": { "method": "GET", "url": "{{produtosUrl}}/produtos/1" } },
+      { "name": "Cadastrar produto", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"nome\": \"A Redoma de Vidro\",\n  \"autor\": \"Sylvia Plath\",\n  \"genero\": \"Romance\",\n  \"descricao\": \"Um clássico contemporâneo.\",\n  \"capa\": \"https://covers.openlibrary.org/b/isbn/9780060837020-L.jpg\",\n  \"preco\": 44.9,\n  \"estoque\": 8\n}" }, "url": "{{produtosUrl}}/produtos" } }
+    ]},
+    { "name": "Pedidos", "item": [
+      { "name": "Listar pedidos", "request": { "method": "GET", "url": "{{pedidosUrl}}/pedidos" } },
+      { "name": "Buscar pedido", "request": { "method": "GET", "url": "{{pedidosUrl}}/pedidos/1" } },
+      { "name": "Criar pedido válido", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"produtoId\": 1,\n  \"quantidade\": 2\n}" }, "url": "{{pedidosUrl}}/pedidos" } },
+      { "name": "Produto inexistente (404)", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"produtoId\": 99999,\n  \"quantidade\": 1\n}" }, "url": "{{pedidosUrl}}/pedidos" } },
+      { "name": "Estoque insuficiente (409)", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": { "mode": "raw", "raw": "{\n  \"produtoId\": 1,\n  \"quantidade\": 999\n}" }, "url": "{{pedidosUrl}}/pedidos" } }
+    ]}
+  ]
+}

@@ -1,0 +1,6 @@
+import { Link } from 'react-router-dom';
+import Cover from './Cover.jsx';
+import { useCart } from '../context/CartContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
+const money = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+export default function ProductCard({ book }) { const { addItem } = useCart(); const { showToast } = useToast(); const available = book.estoque > 0; const add = () => { addItem(book); showToast('Livro adicionado ao carrinho.', 'success'); }; return <article className="book-card"><Link to={`/livro/${book.id}`} className="book-card__cover"><Cover src={book.capa} alt={`Capa de ${book.nome}`} /></Link><div className="book-card__body"><p className="eyebrow">{book.genero}</p><h2><Link to={`/livro/${book.id}`}>{book.nome}</Link></h2><p className="author">{book.autor}</p><div className="card-bottom"><div><strong>{money(book.preco)}</strong><small className={available ? 'available' : 'unavailable'}>{available ? `${book.estoque} em estoque` : 'Indisponível'}</small></div><button className="round-button" onClick={add} disabled={!available} aria-label={`Adicionar ${book.nome} ao carrinho`}>+</button></div><Link to={`/livro/${book.id}`} className="text-link">Ver detalhes <span>→</span></Link></div></article>; }

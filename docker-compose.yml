@@ -1,0 +1,37 @@
+services:
+  ms-produtos:
+    build: ./ms-produtos
+    environment:
+      PORT: 3001
+      CORS_ORIGIN: http://localhost:5173
+      PRODUCTS_DB_PATH: /app/data/produtos.sqlite
+    volumes:
+      - produtos_data:/app/data
+    ports:
+      - "3001:3001"
+  ms-pedidos:
+    build: ./ms-pedidos
+    environment:
+      PORT: 3002
+      CORS_ORIGIN: http://localhost:5173
+      PRODUCTS_SERVICE_URL: http://ms-produtos:3001
+      ORDERS_DB_PATH: /app/data/pedidos.sqlite
+    volumes:
+      - pedidos_data:/app/data
+    ports:
+      - "3002:3002"
+    depends_on:
+      - ms-produtos
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_PRODUCTS_API_URL: http://localhost:3001
+      VITE_ORDERS_API_URL: http://localhost:3002
+    ports:
+      - "5173:5173"
+    depends_on:
+      - ms-produtos
+      - ms-pedidos
+volumes:
+  produtos_data:
+  pedidos_data:

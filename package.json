@@ -1,0 +1,10 @@
+{
+  "name": "bookstop",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix ms-produtos install && npm --prefix ms-pedidos install && npm --prefix frontend install",
+    "dev:produtos": "npm --prefix ms-produtos run dev",
+    "dev:pedidos": "npm --prefix ms-pedidos run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  }
+}
