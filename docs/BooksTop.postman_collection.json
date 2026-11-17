@@ -1,0 +1,324 @@
+{
+  "info": {
+    "name": "BooksTop - Microserviços",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "CRUD REST, compras, projeções e comandos administrativos persistentes do BooksTop."
+  },
+  "variable": [
+    {
+      "key": "produtosUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "pedidosUrl",
+      "value": "http://localhost:3002"
+    },
+    {
+      "key": "queryUrl",
+      "value": "http://localhost:3003"
+    },
+    {
+      "key": "eventBusUrl",
+      "value": "http://localhost:3004"
+    },
+    {
+      "key": "produtoConsultaId",
+      "value": "1"
+    },
+    {
+      "key": "produtoCrudId",
+      "value": ""
+    },
+    {
+      "key": "produtoAdminId",
+      "value": ""
+    },
+    {
+      "key": "pedidoId",
+      "value": "1"
+    },
+    {
+      "key": "comandoId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "MS-Produtos",
+      "item": [
+        {
+          "name": "Listar produtos",
+          "request": {
+            "method": "GET",
+            "url": "{{produtosUrl}}/produtos"
+          }
+        },
+        {
+          "name": "Buscar produto",
+          "request": {
+            "method": "GET",
+            "url": "{{produtosUrl}}/produtos/{{produtoConsultaId}}"
+          }
+        },
+        {
+          "name": "Cadastrar produto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Livro de Exemplo\",\n  \"autor\": \"Autor Exemplo\",\n  \"genero\": \"Ficção\",\n  \"capa\": \"https://example.com/capa.jpg\",\n  \"descricao\": \"\",\n  \"preco\": 39.9,\n  \"estoque\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{produtosUrl}}/produtos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('produtoCrudId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar produto cadastrado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Livro de Exemplo Editado\",\n  \"autor\": \"Autor Exemplo\",\n  \"genero\": \"Ficção\",\n  \"capa\": \"https://example.com/capa.jpg\",\n  \"descricao\": \"Descrição opcional\",\n  \"preco\": 44.9,\n  \"estoque\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{produtosUrl}}/produtos/{{produtoCrudId}}"
+          }
+        },
+        {
+          "name": "Excluir produto cadastrado",
+          "request": {
+            "method": "DELETE",
+            "url": "{{produtosUrl}}/produtos/{{produtoCrudId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "MS-Pedidos",
+      "item": [
+        {
+          "name": "Listar pedidos",
+          "request": {
+            "method": "GET",
+            "url": "{{pedidosUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "Buscar pedido",
+          "request": {
+            "method": "GET",
+            "url": "{{pedidosUrl}}/pedidos/{{pedidoId}}"
+          }
+        },
+        {
+          "name": "Criar pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"quantidade\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{pedidosUrl}}/pedidos",
+            "description": "Para comprar um livro administrativo, substitua produtoId por \"{{produtoAdminId}}\" após a entrega ao MS-Pedidos."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  pm.collectionVariables.set('pedidoId', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MS-Query",
+      "item": [
+        {
+          "name": "Catálogo projetado",
+          "request": {
+            "method": "GET",
+            "url": "{{queryUrl}}/produtos"
+          }
+        },
+        {
+          "name": "Detalhes projetados",
+          "request": {
+            "method": "GET",
+            "url": "{{queryUrl}}/produtos/{{produtoConsultaId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin / Event Bus",
+      "item": [
+        {
+          "name": "Cadastrar livro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Livro de Exemplo\",\n  \"autor\": \"Autor Exemplo\",\n  \"genero\": \"Ficção\",\n  \"capa\": \"https://example.com/capa.jpg\",\n  \"descricao\": \"\",\n  \"preco\": 39.9,\n  \"estoque\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{eventBusUrl}}/admin/produtos",
+            "description": "Execute com o MS-Produtos online ou offline. A resposta 202 contém o UUID que será usado pelos três serviços."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 202) {",
+                  "  const comando = pm.response.json();",
+                  "  pm.collectionVariables.set('produtoAdminId', comando.produtoId);",
+                  "  pm.collectionVariables.set('comandoId', comando.commandId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar livro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Livro de Exemplo Editado\",\n  \"autor\": \"Autor Exemplo\",\n  \"genero\": \"Ficção\",\n  \"capa\": \"https://example.com/capa.jpg\",\n  \"descricao\": \"Descrição opcional\",\n  \"preco\": 44.9,\n  \"estoque\": 8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{eventBusUrl}}/admin/produtos/{{produtoAdminId}}",
+            "description": "Omita estoque para manter o saldo atual; envie um inteiro para alterar o estoque."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 202) {",
+                  "  pm.collectionVariables.set('comandoId', pm.response.json().commandId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excluir livro",
+          "request": {
+            "method": "DELETE",
+            "url": "{{eventBusUrl}}/admin/produtos/{{produtoAdminId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 202) {",
+                  "  pm.collectionVariables.set('comandoId', pm.response.json().commandId);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar estado do comando",
+          "request": {
+            "method": "GET",
+            "url": "{{eventBusUrl}}/admin/comandos/{{comandoId}}"
+          }
+        },
+        {
+          "name": "Listar livros aguardando sincronização",
+          "request": {
+            "method": "GET",
+            "url": "{{eventBusUrl}}/admin/sincronizacao"
+          }
+        },
+        {
+          "name": "Health e entregas",
+          "request": {
+            "method": "GET",
+            "url": "{{eventBusUrl}}/health"
+          }
+        }
+      ]
+    }
+  ]
+}

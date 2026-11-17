@@ -1,0 +1,23 @@
+{
+  "name": "bookstop",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "event-bus",
+    "ms-produtos",
+    "ms-pedidos",
+    "ms-query",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "dev:event-bus": "npm --workspace event-bus run dev",
+    "dev:produtos": "npm --workspace ms-produtos run dev",
+    "dev:pedidos": "npm --workspace ms-pedidos run dev",
+    "dev:query": "npm --workspace ms-query run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "build": "npm --workspace frontend run build",
+    "test": "npm --workspace ms-produtos test && npm --workspace ms-pedidos test && npm --workspace ms-query test && npm --workspace event-bus test"
+  },
+  "type": "module"
+}

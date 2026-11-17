@@ -1,0 +1,73 @@
+services:
+  event-bus:
+    build: ./event-bus
+    environment:
+      PORT: 3004
+      EVENT_BUS_DB_PATH: /app/data/event-bus.sqlite
+      PRODUCTS_URL: http://ms-produtos:3001
+      ORDERS_URL: http://ms-pedidos:3002
+      QUERY_URL: http://ms-query:3003
+    volumes:
+      - event_bus_data:/app/data
+    ports:
+      - "3004:3004"
+
+  ms-produtos:
+    build: ./ms-produtos
+    environment:
+      PORT: 3001
+      CORS_ORIGIN: http://localhost:5173
+      PRODUCTS_DB_PATH: /app/data/produtos.sqlite
+      EVENT_BUS_URL: http://event-bus:3004
+    volumes:
+      - produtos_data:/app/data
+    ports:
+      - "3001:3001"
+    depends_on:
+      - event-bus
+
+  ms-pedidos:
+    build: ./ms-pedidos
+    environment:
+      PORT: 3002
+      CORS_ORIGIN: http://localhost:5173
+      ORDERS_DB_PATH: /app/data/pedidos.sqlite
+      EVENT_BUS_URL: http://event-bus:3004
+    volumes:
+      - pedidos_data:/app/data
+    ports:
+      - "3002:3002"
+    depends_on:
+      - event-bus
+
+  ms-query:
+    build: ./ms-query
+    environment:
+      PORT: 3003
+      CORS_ORIGIN: http://localhost:5173
+      QUERY_DB_PATH: /app/data/query.sqlite
+      EVENT_BUS_URL: http://event-bus:3004
+    volumes:
+      - query_data:/app/data
+    ports:
+      - "3003:3003"
+    depends_on:
+      - event-bus
+
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_QUERY_API_URL: http://localhost:3003
+      VITE_ORDERS_API_URL: http://localhost:3002
+      VITE_EVENT_BUS_API_URL: http://localhost:3004
+    ports:
+      - "5173:5173"
+    depends_on:
+      - ms-query
+      - ms-pedidos
+
+volumes:
+  event_bus_data:
+  produtos_data:
+  pedidos_data:
+  query_data:
